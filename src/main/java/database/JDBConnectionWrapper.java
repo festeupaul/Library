@@ -17,7 +17,7 @@ public class JDBConnectionWrapper {
     public JDBConnectionWrapper(String schema) {
         try {
             Class.forName(JDBC_DRIVER);
-            connection = DriverManager.getConnection(DB_URL + schema, USER, PASS);
+            connection = DriverManager.getConnection(DB_URL + schema + "?allowMultiQueries=true", USER, PASS);
             createTables();
         }catch (ClassNotFoundException e) {
             e.printStackTrace();
