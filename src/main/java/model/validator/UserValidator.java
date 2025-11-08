@@ -2,6 +2,7 @@ package model.validator;
 
 
 import model.User;
+import repository.user.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,38 +12,52 @@ import java.util.regex.Pattern;
 public class UserValidator {
     private static final String EMAIL_VALIDATION_REGEX = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
     public static final int MIN_PASSWORD_LENGTH = 8;
-    private final List<String> errors;
-    private final User user;
+    private final List<String> errors = new ArrayList<>();
+    private final UserRepository userRepository;
 
-    public UserValidator(User user) {
-        this.user = user;
-        this.errors = new ArrayList<>();
+    public UserValidator(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public boolean validate() {
-        validateUsername(user.getUsername());
-        validatePassword(user.getPassword());
-
-        return errors.isEmpty();
+    public void validate(String username, String password) {
+        errors.clear();
+        validateUsernameUniqueness(username);
+        validateUsername(username);
+        validatePasswordLength(password);
+        validatePasswordSpecial(password);
+        validatePasswordDigit(password);
     }
+
+
+    private void validateUsernameUniqueness(String username) {
+        final boolean response = userRepository.existsByUsername(username);
+        if (response) {
+            errors.add("Email already exists!");
+        }
+    }
+
 
     private void validateUsername(String username){
-        if (!Pattern.compile(EMAIL_VALIDATION_REGEX).matcher(username).matches()){
+        if (!username.matches(EMAIL_VALIDATION_REGEX)){
             errors.add("Email is not valid!");
         }
     }
 
-    private void validatePassword(String password){
+    private void validatePasswordLength(String password){
         if (password.length() < MIN_PASSWORD_LENGTH){
             errors.add(String.format("Password must be at least %d characters long!", MIN_PASSWORD_LENGTH));
         }
+    }
 
+    private void validatePasswordSpecial(String password){
         if (!containsSpecialCharacter(password)){
             errors.add("Password must contain at least one special character.");
         }
+    }
 
+    private void validatePasswordDigit(String password){
         if (!containsDigit(password)){
-            errors.add("Password must contain at least one digit!");
+            errors.add("Password must contain at least one digit.");
         }
     }
 
