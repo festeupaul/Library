@@ -1,9 +1,8 @@
-package repository;
+package repository.book;
 
 import model.Book;
 import model.builder.BookBuilder;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
