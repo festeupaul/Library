@@ -26,16 +26,6 @@ public class LoginComponentFactory {
     private static Boolean componentsForTests;
     private static Stage stage;
 
-    public static LoginComponentFactory getInstance(Boolean aComponentsForTests, Stage aStage) {
-        if (instance == null) {
-            componentsForTests = aComponentsForTests;
-            stage = aStage;
-            instance = new LoginComponentFactory(componentsForTests, stage);
-        }
-
-        return instance;
-    }
-
     public LoginComponentFactory(Boolean componentsForTests, Stage stage){
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTests).getConnection();
         this.rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
@@ -44,6 +34,16 @@ public class LoginComponentFactory {
         this.loginView = new LoginView(stage);
         this.loginController = new LoginController(loginView, authenticationService);
         this.bookRepository = new BookRepositoryMySQL(connection);
+    }
+
+    public static LoginComponentFactory getInstance(Boolean ComponentsForTests, Stage Stage) {
+        if (instance == null) {
+            componentsForTests = ComponentsForTests;
+            stage = Stage;
+            instance = new LoginComponentFactory(componentsForTests, stage);
+        }
+
+        return instance;
     }
 
     public static Stage getStage(){
