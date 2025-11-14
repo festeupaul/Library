@@ -3,6 +3,7 @@ import database.DatabaseConnectionFactory;
 import database.JDBConnectionWrapper;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import launcher.LoginComponentFactory;
 import model.Book;
 import model.builder.BookBuilder;
 import model.validator.UserValidator;
@@ -18,6 +19,7 @@ import service.book.BookService;
 import service.book.BookServiceImpl;
 import service.user.AuthenticationService;
 import service.user.AuthenticationServiceImpl;
+import view.BookView;
 import view.model.LoginView;
 
 import java.sql.Connection;
@@ -39,6 +41,7 @@ public class Main extends Application {
         final LoginView loginView = new LoginView(primaryStage);
 
         new LoginController(loginView, authenticationService);
+         //LoginComponentFactory.getInstance(false, primaryStage);
     }
 
     public static void main(String[] args) {

@@ -3,11 +3,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 //import launcher.EmployeeComponentFactory;
 //import launcher.LoginComponentFactory;
+import javafx.stage.Stage;
+import launcher.ComponentFactory;
 import launcher.LoginComponentFactory;
 import model.User;
 import model.validator.Notification;
 import model.validator.UserValidator;
 import service.user.AuthenticationService;
+import view.BookView;
 import view.model.LoginView;
 
 import java.util.EventListener;
@@ -40,6 +43,14 @@ public class LoginController {
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
             }else{
                 loginView.setActionTargetText("LogIn Successfull!");
+                if (!loginNotification.hasErrors()) {
+                    loginView.setActionTargetText("LogIn Successful!");
+                    BookView bookView = ComponentFactory.getInstance(false, new Stage()).getBookView();
+                    bookView.getPrimaryStage().show();
+                    loginView.getPrimaryStage().close();
+                }
+
+                //ComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
             }
         }
     }

@@ -10,9 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import model.Book;
 import view.model.BookDTO;
-import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 
 import java.util.List;
@@ -26,6 +24,7 @@ public class BookView {
     private Label titleLabel;
     private Button saveButton;
     private Button deleteButton;
+    private Stage primaryStage;
 
     public BookView(Stage primaryStage, List<BookDTO> books) {
         primaryStage.setTitle("Library");
@@ -40,6 +39,7 @@ public class BookView {
 
         initSaveOptions(gridPane);
 
+        this.primaryStage = primaryStage;
         primaryStage.show();
     }
 
@@ -118,5 +118,9 @@ public class BookView {
 
     public TableView getBookTableView() {
         return bookTableView;
+    }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
     }
 }

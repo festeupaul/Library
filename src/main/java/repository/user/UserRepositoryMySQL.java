@@ -43,22 +43,26 @@ public class UserRepositoryMySQL implements UserRepository {
             Statement statement = connection.createStatement();
 
             String fetchUserSql =
-                    "Select * from `" + USER + "` where `username`=\'" + username + "\' and `password`=\'" + password + "\'";
-            ResultSet userResultSet = statement.executeQuery(fetchUserSql);
-            if (userResultSet.next())
-            {
-                User user = new UserBuilder()
-                        .setUsername(userResultSet.getString("username"))
-                        .setPassword(userResultSet.getString("password"))
-                        .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
-                        .build();
+                    "SELECT * FROM `" + USER + "` WHERE `username` = ? AND `password` = ?";
+            try(PreparedStatement preparedStatement = connection.prepareStatement(fetchUserSql)){
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, password);
+                try(ResultSet resultSet = preparedStatement.executeQuery()){
+                    if (resultSet.next())
+                    {
+                        User user = new UserBuilder()
+                                .setUsername(resultSet.getString("username"))
+                                .setPassword(resultSet.getString("password"))
+                                .setRoles(rightsRolesRepository.findRolesForUser(resultSet.getLong("id")))
+                                .build();
 
-                findByUsernameAndPasswordNotification.setResult(user);
-            } else {
-                findByUsernameAndPasswordNotification.addError("Invalid username or password!");
-                return findByUsernameAndPasswordNotification;
+                        findByUsernameAndPasswordNotification.setResult(user);
+                    } else {
+                        findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                        return findByUsernameAndPasswordNotification;
+                    }
+                }
             }
-
         } catch (SQLException e) {
             System.out.println(e.toString());
             findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
