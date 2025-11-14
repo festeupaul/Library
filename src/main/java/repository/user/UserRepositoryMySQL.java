@@ -1,5 +1,4 @@
 package repository.user;
-
 import model.User;
 import model.builder.UserBuilder;
 import model.validator.Notification;
@@ -13,6 +12,7 @@ import java.sql.Statement;
 import java.util.List;
 
 import static database.Constants.Tables.USER;
+import static java.util.Collections.singletonList;
 
 public class UserRepositoryMySQL implements UserRepository {
 
@@ -36,28 +36,36 @@ public class UserRepositoryMySQL implements UserRepository {
     // ' or username LIKE '%admin%'; --
 
     @Override
-    public User findByUsernameAndPassword(String username, String password) {
-        // de shimbat not sql injection safe
-        //Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
+    public Notification<User> findByUsernameAndPassword(String username, String password) {
+
+        Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
         try {
             Statement statement = connection.createStatement();
 
             String fetchUserSql =
                     "Select * from `" + USER + "` where `username`=\'" + username + "\' and `password`=\'" + password + "\'";
             ResultSet userResultSet = statement.executeQuery(fetchUserSql);
-            userResultSet.next();
-            User user = new UserBuilder()
-                    .setUsername(userResultSet.getString("username"))
-                    .setPassword(userResultSet.getString("password"))
-                    .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
-                    .build();
-            return user;
+            if (userResultSet.next())
+            {
+                User user = new UserBuilder()
+                        .setUsername(userResultSet.getString("username"))
+                        .setPassword(userResultSet.getString("password"))
+                        .setRoles(rightsRolesRepository.findRolesForUser(userResultSet.getLong("id")))
+                        .build();
+
+                findByUsernameAndPasswordNotification.setResult(user);
+            } else {
+                findByUsernameAndPasswordNotification.addError("Invalid username or password!");
+                return findByUsernameAndPasswordNotification;
+            }
+
         } catch (SQLException e) {
             System.out.println(e.toString());
+            findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
         }
-        return null;
-    }
 
+        return findByUsernameAndPasswordNotification;
+    }
 
     @Override
     public boolean save(User user) {
