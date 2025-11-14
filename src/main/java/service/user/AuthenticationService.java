@@ -3,10 +3,12 @@ package service.user;
 import model.User;
 import model.validator.Notification;
 
-public interface AuthenticationService {
-    boolean register(String username, String password);
+import javax.management.remote.NotificationResult;
 
-    User login(String username, String password);
+public interface AuthenticationService {
+    Notification<Boolean> register(String username, String password);
+
+    Notification<User> login(String username, String password);
 
     boolean logout(User user);
 }
