@@ -30,18 +30,7 @@ import static database.Constants.Schemas.PRODUCTION;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        final Connection connection = new JDBConnectionWrapper(PRODUCTION).getConnection();
-
-        final RightsRolesRepository rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
-
-        final UserRepository userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
-
-        final AuthenticationService authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
-
-        final LoginView loginView = new LoginView(primaryStage);
-
-        new LoginController(loginView, authenticationService);
-         //LoginComponentFactory.getInstance(false, primaryStage);
+        LoginComponentFactory.getInstance(false, primaryStage);
     }
 
     public static void main(String[] args) {
