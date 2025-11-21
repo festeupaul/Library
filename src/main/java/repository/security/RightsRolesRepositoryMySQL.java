@@ -103,32 +103,31 @@ public class RightsRolesRepositoryMySQL implements RightsRolesRepository {
     }
 
     @Override
-    public void addRolesToUser(User user, List<Role> roles) {
+    public void addRoleToUser(User user, Role role) {
         try {
-            for (Role role : roles) {
-                PreparedStatement insertUserRoleStatement = connection
-                        .prepareStatement("INSERT INTO `user_role` values (null, ?, ?)");
-                insertUserRoleStatement.setLong(1, user.getId());
-                insertUserRoleStatement.setLong(2, role.getId());
-                insertUserRoleStatement.executeUpdate();
-            }
+            PreparedStatement insertUserRoleStatement = connection
+                    .prepareStatement("INSERT INTO `user_role` values (null, ?, ?)");
+            insertUserRoleStatement.setLong(1, user.getId());
+            insertUserRoleStatement.setLong(2, role.getId());
+            insertUserRoleStatement.executeUpdate();
+
         } catch (SQLException e) {
 
         }
     }
 
     @Override
-    public List<Role> findRolesForUser(Long userId) {
+    public Role findRoleForUser(Long userId) {
         try {
-            List<Role> roles = new ArrayList<>();
+            Role role = null;
             Statement statement = connection.createStatement();
             String fetchRoleSql = "Select * from " + USER_ROLE + " where `user_id`=\'" + userId + "\'";
             ResultSet userRoleResultSet = statement.executeQuery(fetchRoleSql);
             while (userRoleResultSet.next()) {
                 long roleId = userRoleResultSet.getLong("role_id");
-                roles.add(findRoleById(roleId));
+                role = findRoleById(roleId);
             }
-            return roles;
+            return role;
         } catch (SQLException e) {
 
         }
