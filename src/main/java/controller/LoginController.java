@@ -43,14 +43,7 @@ public class LoginController {
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
             }else{
                 loginView.setActionTargetText("LogIn Successfull!");
-                if (!loginNotification.hasErrors()) {
-                    loginView.setActionTargetText("LogIn Successful!");
-                    BookView bookView = ComponentFactory.getInstance(false, new Stage()).getBookView();
-                    bookView.getPrimaryStage().show();
-                    loginView.getPrimaryStage().close();
-                }
-
-                //ComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                ComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
             }
         }
     }
