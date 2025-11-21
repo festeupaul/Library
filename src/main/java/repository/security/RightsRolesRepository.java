@@ -17,9 +17,9 @@ public interface RightsRolesRepository {
 
     Right findRightByTitle(String right);
 
-    void addRolesToUser(User user, List<Role> roles);
+    void addRoleToUser(User user, Role role);
 
-    List<Role> findRolesForUser(Long userId);
+    Role findRoleForUser(Long userId);
 
     void addRoleRight(Long roleId, Long rightId);
 }

@@ -1,24 +1,20 @@
 package repository.user;
+
 import model.User;
 import model.builder.UserBuilder;
 import model.validator.Notification;
 import repository.security.RightsRolesRepository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static database.Constants.Tables.USER;
-import static java.util.Collections.singletonList;
 
 public class UserRepositoryMySQL implements UserRepository {
 
     private final Connection connection;
     private final RightsRolesRepository rightsRolesRepository;
-
 
     public UserRepositoryMySQL(Connection connection, RightsRolesRepository rightsRolesRepository) {
         this.connection = connection;
@@ -27,39 +23,45 @@ public class UserRepositoryMySQL implements UserRepository {
 
     @Override
     public List<User> findAll() {
-        return null;
+        List<User> users = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            String sql = "SELECT * FROM `" + USER + "`";
+            ResultSet rs = statement.executeQuery(sql);
+            while (rs.next()) {
+                User user = new UserBuilder()
+                        .setId(rs.getLong("id"))
+                        .setUsername(rs.getString("username"))
+                        .setPassword(rs.getString("password"))
+                        .setRole(rightsRolesRepository.findRoleForUser(rs.getLong("id")))
+                        .build();
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
     }
-
-    // SQL Injection Attacks should not work after fixing functions
-    // Be careful that the last character in sql injection payload is an empty space
-    // alexandru.ghiurutan95@gmail.com' and 1=1; --
-    // ' or username LIKE '%admin%'; --
 
     @Override
     public Notification<User> findByUsernameAndPassword(String username, String password) {
-
         Notification<User> findByUsernameAndPasswordNotification = new Notification<>();
         try {
-            Statement statement = connection.createStatement();
-
-            String fetchUserSql =
-                    "SELECT * FROM `" + USER + "` WHERE `username` = ? AND `password` = ?";
-            try(PreparedStatement preparedStatement = connection.prepareStatement(fetchUserSql)){
+            String fetchUserSql = "SELECT * FROM `" + USER + "` WHERE `username` = ? AND `password` = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(fetchUserSql)) {
                 preparedStatement.setString(1, username);
                 preparedStatement.setString(2, password);
-                try(ResultSet resultSet = preparedStatement.executeQuery()){
-                    if (resultSet.next())
-                    {
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
                         User user = new UserBuilder()
+                                .setId(resultSet.getLong("id")) // Setam si ID-ul!
                                 .setUsername(resultSet.getString("username"))
                                 .setPassword(resultSet.getString("password"))
-                                .setRoles(rightsRolesRepository.findRolesForUser(resultSet.getLong("id")))
+                                .setRole(rightsRolesRepository.findRoleForUser(resultSet.getLong("id")))
                                 .build();
-
                         findByUsernameAndPasswordNotification.setResult(user);
                     } else {
                         findByUsernameAndPasswordNotification.addError("Invalid username or password!");
-                        return findByUsernameAndPasswordNotification;
                     }
                 }
             }
@@ -67,7 +69,6 @@ public class UserRepositoryMySQL implements UserRepository {
             System.out.println(e.toString());
             findByUsernameAndPasswordNotification.addError("Something is wrong with the Database!");
         }
-
         return findByUsernameAndPasswordNotification;
     }
 
@@ -75,7 +76,7 @@ public class UserRepositoryMySQL implements UserRepository {
     public boolean save(User user) {
         try {
             PreparedStatement insertUserStatement = connection
-                    .prepareStatement("INSERT INTO user values (null, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                    .prepareStatement("INSERT INTO " + USER + " values (null, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             insertUserStatement.setString(1, user.getUsername());
             insertUserStatement.setString(2, user.getPassword());
             insertUserStatement.executeUpdate();
@@ -85,21 +86,65 @@ public class UserRepositoryMySQL implements UserRepository {
             long userId = rs.getLong(1);
             user.setId(userId);
 
-            rightsRolesRepository.addRolesToUser(user, user.getRoles());
+            rightsRolesRepository.addRoleToUser(user, user.getRole());
 
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
+    }
 
+    @Override
+    public boolean delete(User user) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM `" + USER + "` WHERE id = ?");
+            statement.setLong(1, user.getId());
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean update(User user) {
+        try {
+            String oldPassword = "";
+            String getPassSql = "SELECT password FROM `" + USER + "` WHERE id = ?";
+            try (PreparedStatement getPassStmt = connection.prepareStatement(getPassSql)) {
+                getPassStmt.setLong(1, user.getId());
+                ResultSet rs = getPassStmt.executeQuery();
+                if (rs.next()) {
+                    oldPassword = rs.getString("password");
+                }
+            }
+
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE `" + USER + "` SET username = ?, password = ? WHERE id = ?"
+            );
+            statement.setString(1, user.getUsername());
+            statement.setString(2, oldPassword);
+            statement.setLong(3, user.getId());
+            statement.executeUpdate();
+
+            if (user.getRole() != null) {
+                rightsRolesRepository.addRoleToUser(user, user.getRole());
+            }
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public void removeAll() {
         try {
             Statement statement = connection.createStatement();
-            String sql = "DELETE from user where id >= 0";
+            String sql = "DELETE from " + USER + " where id >= 0";
             statement.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -109,17 +154,14 @@ public class UserRepositoryMySQL implements UserRepository {
     @Override
     public boolean existsByUsername(String email) {
         try {
-            Statement statement = connection.createStatement();
-
-            String fetchUserSql =
-                    "Select * from `" + USER + "` where `username`=\'" + email + "\'";
-            ResultSet userResultSet = statement.executeQuery(fetchUserSql);
+            String fetchUserSql = "SELECT * FROM `" + USER + "` WHERE `username` = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(fetchUserSql);
+            preparedStatement.setString(1, email);
+            ResultSet userResultSet = preparedStatement.executeQuery();
             return userResultSet.next();
-
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
 }

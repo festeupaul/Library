@@ -1,4 +1,4 @@
-package service.user;
+package service.login;
 import model.Role;
 import model.User;
 import model.builder.UserBuilder;
@@ -9,7 +9,6 @@ import repository.user.UserRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.Collections;
 
 import static database.Constants.Roles.CUSTOMER;
 
@@ -32,7 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = new UserBuilder()
                 .setUsername(username)
                 .setPassword(password)
-                .setRoles(Collections.singletonList(customerRole))
+                .setRole(customerRole)
                 .build();
 
         UserValidator userValidator = new UserValidator(user);

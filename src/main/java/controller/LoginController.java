@@ -3,18 +3,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 //import launcher.EmployeeComponentFactory;
 //import launcher.LoginComponentFactory;
-import javafx.stage.Stage;
-import launcher.ComponentFactory;
+import launcher.BookComponentFactory;
 import launcher.LoginComponentFactory;
 import model.User;
 import model.validator.Notification;
-import model.validator.UserValidator;
-import service.user.AuthenticationService;
-import view.BookView;
-import view.model.LoginView;
-
-import java.util.EventListener;
-import java.util.List;
+import service.login.AuthenticationService;
+import view.LoginView;
+import database.Constants;
 
 public class LoginController {
 
@@ -43,7 +38,15 @@ public class LoginController {
                 loginView.setActionTargetText(loginNotification.getFormattedErrors());
             }else{
                 loginView.setActionTargetText("LogIn Successfull!");
-                ComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                if(loginNotification.getResult().getRole().getRole().equals(Constants.Roles.ADMINISTRATOR)){
+                    BookComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                } else if (loginNotification.getResult().getRole().getRole().equals(Constants.Roles.CUSTOMER)) {
+                    BookComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                } else {
+                    //customer
+                    //ComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                }
+                //ComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
             }
         }
     }
@@ -61,7 +64,7 @@ public class LoginController {
                 loginView.setActionTargetText(registerNotification.getFormattedErrors());
             } else {
                 loginView.setActionTargetText("Register successful!");
-            }
+             }
         }
     }
 }

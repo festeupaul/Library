@@ -14,19 +14,19 @@ import view.model.BookDTO;
 import java.sql.Connection;
 import java.util.List;
 
-public class ComponentFactory {
+public class BookComponentFactory {
     private final BookView bookView;
     private final BookController bookController;
     private final BookRepository bookRepository;
     private final BookService bookService;
-    private static ComponentFactory instance;
+    private static BookComponentFactory instance;
 
-    public static ComponentFactory getInstance(Boolean componentsForTest, Stage primaryStage) {
+    public static BookComponentFactory getInstance(Boolean componentsForTest, Stage primaryStage) {
          //lazy load singleton
         if (instance == null) {
-            synchronized (ComponentFactory.class) {
+            synchronized (BookComponentFactory.class) {
                 if (instance == null) {
-                    instance = new ComponentFactory(componentsForTest, primaryStage);
+                    instance = new BookComponentFactory(componentsForTest, primaryStage);
                 }
             }
         }
@@ -36,7 +36,7 @@ public class ComponentFactory {
         return instance;
     }
 
-    /*public*/private ComponentFactory(Boolean componentsForTest, Stage primaryStage) {
+    /*public*/private BookComponentFactory(Boolean componentsForTest, Stage primaryStage) {
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
         this.bookRepository = new BookRepositoryMySQL(connection);
         this.bookService = new BookServiceImpl(bookRepository);

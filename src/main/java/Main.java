@@ -1,36 +1,30 @@
-import controller.LoginController;
-import database.DatabaseConnectionFactory;
-import database.JDBConnectionWrapper;
+import controller.UserController;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import launcher.LoginComponentFactory;
-import model.Book;
-import model.builder.BookBuilder;
-import model.validator.UserValidator;
-import repository.book.BookRepository;
-import repository.book.BookRepositoryCacheDecorator;
-import repository.book.BookRepositoryMySQL;
-import repository.book.Cache;
-import repository.security.RightsRolesRepository;
-import repository.security.RightsRolesRepositoryMySQL;
+import launcher.UserComponentFactory;
+import mapper.UserMapper;
+import model.User;
 import repository.user.UserRepository;
 import repository.user.UserRepositoryMySQL;
-import service.book.BookService;
-import service.book.BookServiceImpl;
-import service.user.AuthenticationService;
-import service.user.AuthenticationServiceImpl;
-import view.BookView;
-import view.model.LoginView;
+import service.user.UserService;
+import service.user.UserServiceImpl;
+import view.UserView;
+import view.model.BookDTO;
+import view.model.UserDTO;
 
-import java.sql.Connection;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import static database.Constants.Schemas.PRODUCTION;
 
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        LoginComponentFactory.getInstance(false, primaryStage);
+        //LoginComponentFactory.getInstance(false, primaryStage);
+
+        //List<UserDTO> dummyUsers = new ArrayList<>();
+        //new UserView(primaryStage, dummyUsers);
+
+        UserComponentFactory.getInstance(false, primaryStage);
     }
 
     public static void main(String[] args) {
