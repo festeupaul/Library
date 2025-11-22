@@ -17,7 +17,7 @@ public class SQLTableCreationFactory {
                     "  title varchar(500) NOT NULL," +
                     "  publishedDate datetime DEFAULT NULL," +
                     "  PRIMARY KEY (id)," +
-                    "  price float DEFAULT 0.0," +
+                    "  price double DEFAULT 0.0," +
                     "  stock int(11) DEFAULT 0," +
                     "  UNIQUE KEY id_UNIQUE (id)" +
                     ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;";

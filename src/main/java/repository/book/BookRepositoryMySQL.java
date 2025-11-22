@@ -57,26 +57,23 @@ public class BookRepositoryMySQL implements BookRepository {
     public boolean save(Book book) {
 //        String newSql = "INSERT INTO book VALUES(null, \'" + book.getAuthor() + "\', \'" + book.getTitle() +
 //                "\', \'" + book.getPublishedDate() + "\' )";
-        String newSql = "INSERT INTO book VALUES (null, ?, ?, ?);";
+        try {
+            String newSql = "INSERT INTO book (author, title, publishedDate, price, stock) VALUES (?, ?, ?, ?, ?)";
 
-        try{
             PreparedStatement preparedStatement = connection.prepareStatement(newSql);
+
             preparedStatement.setString(1, book.getAuthor());
             preparedStatement.setString(2, book.getTitle());
             preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            preparedStatement.setDouble(4, book.getPrice());
+            preparedStatement.setInt(5, book.getStock());
 
-            int rowsInserted = preparedStatement.executeUpdate();
-            return (rowsInserted != 1) ? false : true;
-
-//            Statement statement = connection.createStatement();
-//            statement.executeUpdate(newSql);
-
-
-        }catch (SQLException e) {
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
-//        return true;
     }
 
     @Override
@@ -120,6 +117,8 @@ public class BookRepositoryMySQL implements BookRepository {
                 .setTitle(resultSet.getString("title"))
                 .setAuthor(resultSet.getString("author"))
                 .setPublishedDate(new java.sql.Date(resultSet.getDate("publishedDate").getTime()).toLocalDate())
+                .setPrice(resultSet.getDouble("price"))
+                .setStock(resultSet.getInt("stock"))
                 .build();
     }
 }

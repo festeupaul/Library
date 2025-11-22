@@ -22,16 +22,18 @@ public class UserView {
     private Button deleteButton;
     private Button markAdminButton;
     private Button markEmployeeButton;
-
+    private Button backButton;
+    private Scene scene;
     private Stage primaryStage;
 
     public UserView(Stage primaryStage, List<UserDTO> users) {
+        this.primaryStage = primaryStage;
         primaryStage.setTitle("User Administration");
 
         GridPane gridPane = new GridPane();
         initializeGridPage(gridPane);
 
-        Scene scene = new Scene(gridPane, 720, 480);
+        this.scene = new Scene(gridPane, 720, 480);
         primaryStage.setScene(scene);
 
         usersObservableList = FXCollections.observableArrayList(users);
@@ -74,7 +76,6 @@ public class UserView {
     }
 
     private void initActionOptions(GridPane gridPane) {
-
         deleteButton = new Button("Delete");
         gridPane.add(deleteButton, 0, 1);
 
@@ -85,6 +86,9 @@ public class UserView {
         markEmployeeButton = new Button("Mark as Employee");
         markEmployeeButton.setPrefWidth(172);
         gridPane.add(markEmployeeButton, 3, 1);
+
+        backButton = new Button("Back");
+        gridPane.add(backButton, 4, 1);
     }
 
     public void addDeleteButtonListener(EventHandler<ActionEvent> deleteButtonListener){
@@ -97,6 +101,10 @@ public class UserView {
 
     public void addMarkEmployeeButtonListener(EventHandler<ActionEvent> listener){
         markEmployeeButton.setOnAction(listener);
+    }
+
+    public void addBackButtonListener(EventHandler<ActionEvent> listener) {
+        backButton.setOnAction(listener);
     }
 
     public void addDisplayAlertMessage(String title, String header, String content) {
@@ -121,5 +129,11 @@ public class UserView {
 
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public void show() {
+        primaryStage.setTitle("User Administration");
+        primaryStage.setScene(this.scene);
+        primaryStage.show();
     }
 }

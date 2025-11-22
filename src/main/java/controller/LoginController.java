@@ -4,7 +4,9 @@ import javafx.event.EventHandler;
 //import launcher.EmployeeComponentFactory;
 //import launcher.LoginComponentFactory;
 import launcher.BookComponentFactory;
+import launcher.CustomerComponentFactory;
 import launcher.LoginComponentFactory;
+import launcher.UserComponentFactory;
 import model.User;
 import model.validator.Notification;
 import service.login.AuthenticationService;
@@ -39,14 +41,12 @@ public class LoginController {
             }else{
                 loginView.setActionTargetText("LogIn Successfull!");
                 if(loginNotification.getResult().getRole().getRole().equals(Constants.Roles.ADMINISTRATOR)){
-                    BookComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
-                } else if (loginNotification.getResult().getRole().getRole().equals(Constants.Roles.CUSTOMER)) {
+                    UserComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                } else if (loginNotification.getResult().getRole().getRole().equals(Constants.Roles.EMPLOYEE)) {
                     BookComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
                 } else {
-                    //customer
-                    //ComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
+                    CustomerComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
                 }
-                //ComponentFactory.getInstance(LoginComponentFactory.getComponentsForTests(), LoginComponentFactory.getStage());
             }
         }
     }

@@ -1,5 +1,7 @@
 package model;
 
+import com.sun.javafx.collections.FloatArraySyncer;
+
 import java.time.LocalDate;
 
 public class Book {
@@ -7,6 +9,8 @@ public class Book {
     private String title;
     private String author;
     private LocalDate publishedDate;
+    private Double price;
+    private Integer stock;
 
     public Long getId() {
         return id;
@@ -38,6 +42,22 @@ public class Book {
 
     public void setPublishedDate(LocalDate publishedDate) {
         this.publishedDate = publishedDate;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
     @Override

@@ -2,6 +2,7 @@ package view;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,36 +11,42 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import view.model.BookDTO;
-import javafx.event.ActionEvent;
+import view.model.EmployeeBookDTO;
 
 import java.util.List;
 
-public class BookView {
-    private TableView bookTableView;
-    private final ObservableList<BookDTO> booksObservableList;
+public class EmployeeView {
+    private TableView<EmployeeBookDTO> bookTableView;
+    private final ObservableList<EmployeeBookDTO> booksObservableList;
     private TextField authorTextField;
     private TextField titleTextField;
     private Label authorLabel;
     private Label titleLabel;
+    private TextField priceTextField;
+    private TextField stockTextField;
+    private Label priceLabel;
+    private Label stockLabel;
     private Button saveButton;
     private Button deleteButton;
     private Stage primaryStage;
+    private Button backButton;
+    private  Scene scene;
 
-    public BookView(Stage primaryStage, List<BookDTO> books) {
+    public EmployeeView(Stage primaryStage, List<EmployeeBookDTO> books) {
+        this.primaryStage = primaryStage;
         primaryStage.setTitle("Library");
 
         GridPane gridPane = new GridPane();
         initializeGridPage(gridPane);
 
-        Scene scene = new Scene(gridPane, 720, 480);
+        this.scene = new Scene(gridPane, 780, 500);
         primaryStage.setScene(scene);
+
         booksObservableList = FXCollections.observableArrayList(books);
         initTableView(gridPane);
 
         initSaveOptions(gridPane);
 
-        this.primaryStage = primaryStage;
         primaryStage.show();
     }
 
@@ -51,37 +58,60 @@ public class BookView {
     }
 
     private void initTableView(GridPane gridPane) {
-        bookTableView = new TableView<BookDTO>();
+        bookTableView = new TableView<>();
         bookTableView.setPlaceholder(new Label("No books to display"));
-        TableColumn<BookDTO, String> titleColumn = new TableColumn<BookDTO, String>("Title");
+
+        TableColumn<EmployeeBookDTO, String> titleColumn = new TableColumn<>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        TableColumn<BookDTO, String> authorColumn = new TableColumn<BookDTO, String>("Author");
+
+        TableColumn<EmployeeBookDTO, String> authorColumn = new TableColumn<>("Author");
         authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
 
-        bookTableView.getColumns().addAll(titleColumn, authorColumn);
+        TableColumn<EmployeeBookDTO, Double> priceColumn = new TableColumn<>("Price");
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        TableColumn<EmployeeBookDTO, Integer> stockColumn = new TableColumn<>("Stock");
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+
+        bookTableView.getColumns().addAll(titleColumn, authorColumn, priceColumn, stockColumn);
         bookTableView.setItems(booksObservableList);
 
-        gridPane.add(bookTableView, 0, 0, 5, 1);
+        gridPane.add(bookTableView, 0, 0, 6, 1);
     }
 
     private void initSaveOptions(GridPane gridPane) {
         titleLabel = new Label("Title");
-        gridPane.add(titleLabel, 1, 1);
+        gridPane.add(titleLabel, 0, 1);
 
         titleTextField = new TextField();
-        gridPane.add(titleTextField, 2, 1);
+        gridPane.add(titleTextField, 1, 1);
 
         authorLabel = new Label("Author");
-        gridPane.add(authorLabel, 3, 1);
+        gridPane.add(authorLabel, 2, 1);
 
         authorTextField = new TextField();
-        gridPane.add(authorTextField, 4, 1);
+        gridPane.add(authorTextField, 3, 1);
+
+        priceLabel = new Label("Price");
+        gridPane.add(priceLabel, 0, 2);
+
+        priceTextField = new TextField();
+        gridPane.add(priceTextField, 1, 2);
+
+        stockLabel = new Label("Stock");
+        gridPane.add(stockLabel, 2, 2);
+
+        stockTextField = new TextField();
+        gridPane.add(stockTextField, 3, 2);
 
         saveButton = new Button("Save");
-        gridPane.add(saveButton, 5, 1);
+        gridPane.add(saveButton, 4, 2);
 
         deleteButton = new Button("Delete");
-        gridPane.add(deleteButton, 6, 1);
+        gridPane.add(deleteButton, 5, 2);
+
+        backButton = new Button("Back");
+        gridPane.add(backButton, 7, 1);
     }
 
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener){
@@ -90,6 +120,10 @@ public class BookView {
 
     public void addDeleteButtonListener(EventHandler<ActionEvent> deleteButtonListener){
         deleteButton.setOnAction(deleteButtonListener);
+    }
+
+    public void addBackButtonListener(EventHandler<ActionEvent> listener) {
+        backButton.setOnAction(listener);
     }
 
     public void addDisplayAlertMessage(String title, String header, String content) {
@@ -108,19 +142,33 @@ public class BookView {
         return titleTextField.getText();
     }
 
-    public void addBookToObservableList(BookDTO bookDTO) {
-        this.booksObservableList.add(bookDTO);
+    public String getPrice() {
+        return priceTextField.getText();
     }
 
-    public void removeBookFromObservableList(BookDTO bookDTO) {
-        this.booksObservableList.remove(bookDTO);
+    public String getStock() {
+        return stockTextField.getText();
     }
 
-    public TableView getBookTableView() {
+    public void addBookToObservableList(EmployeeBookDTO employeeBookDTO) {
+        this.booksObservableList.add(employeeBookDTO);
+    }
+
+    public void removeBookFromObservableList(EmployeeBookDTO employeeBookDTO) {
+        this.booksObservableList.remove(employeeBookDTO);
+    }
+
+    public TableView<EmployeeBookDTO> getBookTableView() {
         return bookTableView;
     }
 
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public void show(){
+        primaryStage.setTitle("Library (Employee)");
+        primaryStage.setScene(this.scene);
+        primaryStage.show();
     }
 }

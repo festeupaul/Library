@@ -3,6 +3,7 @@ package controller;
 import database.Constants;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import launcher.AdminComponentFactory;
 import mapper.UserMapper;
 import model.User;
 import service.user.UserService;
@@ -20,6 +21,7 @@ public class UserController {
         this.userView.addDeleteButtonListener(new DeleteButtonListener());
         this.userView.addMarkAdminButtonListener(new MarkAdminButtonListener());
         this.userView.addMarkEmployeeButtonListener(new MarkEmployeeButtonListener());
+        this.userView.addBackButtonListener(new BackButtonListener());
     }
 
     private class DeleteButtonListener implements EventHandler<ActionEvent> {
@@ -61,6 +63,15 @@ public class UserController {
         @Override
         public void handle(ActionEvent actionEvent) {
             changeUserRole(Constants.Roles.EMPLOYEE);
+        }
+    }
+
+    private class BackButtonListener implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent actionEvent) {
+            AdminComponentFactory.getInstance(false, userView.getPrimaryStage())
+                    .getAdminView()
+                    .show();
         }
     }
 
