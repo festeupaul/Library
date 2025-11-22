@@ -1,88 +1,18 @@
-import controller.UserController;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import launcher.AdminComponentFactory;
+import launcher.LoginComponentFactory;
 import launcher.UserComponentFactory;
-import mapper.UserMapper;
-import model.User;
-import repository.user.UserRepository;
-import repository.user.UserRepositoryMySQL;
-import service.user.UserService;
-import service.user.UserServiceImpl;
-import view.UserView;
-import view.model.BookDTO;
-import view.model.UserDTO;
-
-import java.util.ArrayList;
-import java.util.List;
+import view.AdminView;
 
 
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //LoginComponentFactory.getInstance(false, primaryStage);
-
-        //List<UserDTO> dummyUsers = new ArrayList<>();
-        //new UserView(primaryStage, dummyUsers);
-
-        UserComponentFactory.getInstance(false, primaryStage);
+        LoginComponentFactory.getInstance(false, primaryStage);
     }
 
     public static void main(String[] args) {
-
         launch(args);
-        //
-//        System.out.println("Hello World");
-//
-//        Book book = new BookBuilder()
-//                .setTitle("Ion")
-//                .setAuthor("Liviu Rebreanu")
-//                .setPublishedDate(LocalDate.of(1910, 10, 20))
-//                .build();
-//
-//        System.out.println(book);
-//
-//        BookRepository bookRepository = new BookRepositoryMock();
-//
-//        bookRepository.save(book);
-//        bookRepository.save(new BookBuilder()
-//                .setTitle("Moara cu Noroc")
-//                .setAuthor("Ioan Slavici")
-//                .setPublishedDate(LocalDate.of(1950, 2, 10))
-//                .build());
-//        System.out.println(bookRepository.findAll());
-//        bookRepository.removeAll();
-//        System.out.println(bookRepository.findAll());
-//
-//        Connection connection = DatabaseConnectionFactory.getConnectionWrapper(false).getConnection();
-//        //BookRepository bookRepository = new BookRepositoryMySQL(connection);
-//        BookRepository bookRepository = new BookRepositoryCacheDecorator(new BookRepositoryMySQL(connection), new Cache<>());
-//        BookService bookService = new BookServiceImpl(bookRepository);
-//
-//        RightsRolesRepository rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
-//        UserRepository userRepository = new UserRepositoryMySQL(connection, rightsRolesRepository);
-//
-//        AuthenticationService authenticationService = new AuthenticationServiceImpl(userRepository, rightsRolesRepository);
-//
-//        if(userRepository.existsByUsername("Paul")){
-//            System.out.println("Username already exists");
-//        }else{
-//            authenticationService.register("Paul", "parola123!");
-//        }
-//
-//        System.out.println(authenticationService.login("Paul", "parola123!"));
-//
-//        bookService.save(book);
-//        System.out.println(bookService.findAll());
-//        System.out.println(bookService.findAll());
-//        Book bookMoaraCuNoroc = new BookBuilder()
-//                .setTitle("Moara cu Noroc")
-//                .setAuthor("Ioan Slavici")
-//                .setPublishedDate(LocalDate.of(1950, 2, 10))
-//                .build();
-//        bookService.save(bookMoaraCuNoroc);
-//        System.out.println(bookService.findAll());
-//        bookService.delete(bookMoaraCuNoroc);
-//        bookService.delete(book);
-//        System.out.println(bookService.findAll());
     }
 }

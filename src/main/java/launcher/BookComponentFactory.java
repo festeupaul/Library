@@ -1,22 +1,22 @@
 package launcher;
 
-import controller.BookController;
+import controller.EmployeeBookController;
 import database.DatabaseConnectionFactory;
 import javafx.stage.Stage;
-import mapper.BookMapper;
+import mapper.EmployeeBookMapper;
 import repository.book.BookRepository;
 import repository.book.BookRepositoryMySQL;
 import service.book.BookService;
 import service.book.BookServiceImpl;
-import view.BookView;
-import view.model.BookDTO;
+import view.EmployeeView;
+import view.model.EmployeeBookDTO;
 
 import java.sql.Connection;
 import java.util.List;
 
 public class BookComponentFactory {
-    private final BookView bookView;
-    private final BookController bookController;
+    private final EmployeeView bookView;
+    private final EmployeeBookController bookController;
     private final BookRepository bookRepository;
     private final BookService bookService;
     private static BookComponentFactory instance;
@@ -40,16 +40,16 @@ public class BookComponentFactory {
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
         this.bookRepository = new BookRepositoryMySQL(connection);
         this.bookService = new BookServiceImpl(bookRepository);
-        List<BookDTO> bookDTOs = BookMapper.convertBookListToBookDTOList(bookService.findAll());
-        this.bookView = new BookView(primaryStage, bookDTOs);
-        this.bookController = new BookController(bookView, bookService);
+        List<EmployeeBookDTO> employeeBookDTOS = EmployeeBookMapper.convertBookListToBookDTOList(bookService.findAll());
+        this.bookView = new EmployeeView(primaryStage, employeeBookDTOS);
+        this.bookController = new EmployeeBookController(bookView, bookService);
     }
 
-    public BookView getBookView() {
+    public EmployeeView getBookView() {
         return bookView;
     }
 
-    public BookController getBookController() {
+    public EmployeeBookController getBookController() {
         return bookController;
     }
 
