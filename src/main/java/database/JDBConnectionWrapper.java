@@ -29,7 +29,7 @@ public class JDBConnectionWrapper {
     private void createTables() throws SQLException {
         Statement statement = connection.createStatement();
         String sql = "CREATE TABLE IF NOT EXISTS book(" +
-                " id bigint NOT NULL AUTO_INCREMENT," +
+                " id int(11) NOT NULL AUTO_INCREMENT," +
                 " author VARCHAR(500) NOT NULL," +
                 " title VARCHAR(500) NOT NULL," +
                 " publishedDate datetime DEFAULT NULL," +

@@ -3,6 +3,23 @@ package view.model;
 import javafx.beans.property.*;
 
 public class EmployeeBookDTO {
+    private LongProperty id;
+
+    public void setId(long id) {
+        idProperty().set(id);
+    }
+
+    public long getId() {
+        return idProperty().get();
+    }
+
+    public LongProperty idProperty() {
+        if (id == null) {
+            id = new SimpleLongProperty(this, "id");
+        }
+        return id;
+    }
+
     private StringProperty author;
 
     public void setAuthor(String author) {
@@ -70,5 +87,6 @@ public class EmployeeBookDTO {
         }
         return stock;
     }
+
 
 }
