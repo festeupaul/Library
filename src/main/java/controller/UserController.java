@@ -13,10 +13,14 @@ import view.model.UserDTO;
 public class UserController {
     private final UserView userView;
     private final UserService userService;
+    private final Long currentUserId;
+    private final Boolean componentsForTest;
 
-    public UserController(UserView userView, UserService userService) {
+    public UserController(UserView userView, UserService userService, Boolean componentsForTest, Long currentUserId) {
         this.userView = userView;
         this.userService = userService;
+        this.currentUserId = currentUserId;
+        this.componentsForTest = componentsForTest;
 
         this.userView.addDeleteButtonListener(new DeleteButtonListener());
         this.userView.addMarkAdminButtonListener(new MarkAdminButtonListener());
@@ -67,9 +71,8 @@ public class UserController {
     }
 
     private class BackButtonListener implements EventHandler<ActionEvent> {
-        @Override
         public void handle(ActionEvent actionEvent) {
-            AdminComponentFactory.getInstance(false, userView.getPrimaryStage())
+            AdminComponentFactory.getInstance(componentsForTest, userView.getPrimaryStage(), currentUserId)
                     .getAdminView()
                     .show();
         }

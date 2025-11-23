@@ -23,20 +23,23 @@ public class UserComponentFactory {
     private final RightsRolesRepository rightsRolesRepository;
     private final UserService userService;
     private static UserComponentFactory instance;
+    private final Long currentUserId;
 
-    public static UserComponentFactory getInstance(Boolean componentsForTest, Stage primaryStage) {
+    public static UserComponentFactory getInstance(Boolean componentsForTest, Stage primaryStage, Long currentUserId) {
         if (instance == null) {
             synchronized (UserComponentFactory.class) {
                 if (instance == null) {
-                    instance = new UserComponentFactory(componentsForTest, primaryStage);
+                    instance = new UserComponentFactory(componentsForTest, primaryStage, currentUserId);
                 }
             }
         }
         return instance;
     }
 
-    private UserComponentFactory(Boolean componentsForTest, Stage primaryStage) {
+    private UserComponentFactory(Boolean componentsForTest, Stage primaryStage, Long currentUserId) {
         Connection connection = DatabaseConnectionFactory.getConnectionWrapper(componentsForTest).getConnection();
+
+        this.currentUserId = currentUserId;
 
         this.rightsRolesRepository = new RightsRolesRepositoryMySQL(connection);
 
@@ -48,7 +51,7 @@ public class UserComponentFactory {
 
         this.userView = new UserView(primaryStage, userDTOs);
 
-        this.userController = new UserController(userView, userService);
+        this.userController = new UserController(userView, userService, componentsForTest, currentUserId);
     }
 
     public UserView getUserView() {

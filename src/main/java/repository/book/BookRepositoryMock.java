@@ -38,4 +38,17 @@ public class BookRepositoryMock implements BookRepository {
     public void removeAll() {
         books.clear();
     }
+
+    @Override
+    public boolean update(Book book) {
+        Optional<Book> existingBook = findById(book.getId());
+
+        if (existingBook.isPresent()) {
+            books.remove(existingBook.get());
+            books.add(book);
+            return true;
+        }
+
+        return false;
+    }
 }

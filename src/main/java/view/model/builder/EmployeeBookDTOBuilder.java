@@ -7,6 +7,12 @@ public class EmployeeBookDTOBuilder {
     public EmployeeBookDTOBuilder() {
         employeeBookDTO = new EmployeeBookDTO();
     }
+
+    public EmployeeBookDTOBuilder setId(Long id) {
+        employeeBookDTO.setId(id);
+        return this;
+    }
+
     public EmployeeBookDTOBuilder setAuthor(String author) {
         employeeBookDTO.setAuthor(author);
         return this;

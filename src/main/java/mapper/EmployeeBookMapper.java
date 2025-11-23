@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 public class EmployeeBookMapper {
     public static EmployeeBookDTO convertBookToBookDTO(Book book) {
         return new EmployeeBookDTOBuilder()
+                .setId(book.getId())
                 .setTitle(book.getTitle())
                 .setAuthor(book.getAuthor())
                 .setPrice(book.getPrice())
@@ -21,6 +22,7 @@ public class EmployeeBookMapper {
 
     public static Book convertBookDTOToBook(EmployeeBookDTO employeeBookDTO) {
         return new BookBuilder()
+                .setId(employeeBookDTO.getId())
                 .setTitle(employeeBookDTO.getTitle())
                 .setAuthor(employeeBookDTO.getAuthor())
                 .setPublishedDate(LocalDate.of(2010, 1, 1))

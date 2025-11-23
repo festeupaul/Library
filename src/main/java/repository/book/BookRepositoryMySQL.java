@@ -108,9 +108,30 @@ public class BookRepositoryMySQL implements BookRepository {
         }catch (SQLException e){
             e.printStackTrace();
         }
-
-
     }
+
+    @Override
+    public boolean update(Book book) {
+        String sql = "UPDATE book SET author = ?, title = ?, publishedDate = ?, price = ?, stock = ? WHERE id = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, book.getAuthor());
+            preparedStatement.setString(2, book.getTitle());
+            preparedStatement.setDate(3, java.sql.Date.valueOf(book.getPublishedDate()));
+            preparedStatement.setDouble(4, book.getPrice());
+            preparedStatement.setInt(5, book.getStock());
+            preparedStatement.setLong(6, book.getId());
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     private Book getBookFromResultSet(ResultSet resultSet) throws SQLException {
         return new BookBuilder()
                 .setId(resultSet.getLong("id"))

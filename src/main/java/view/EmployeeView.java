@@ -13,24 +13,36 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import view.model.EmployeeBookDTO;
 
+import javafx.scene.control.Dialog;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Pair;
+import view.model.builder.EmployeeBookDTOBuilder;
+
 import java.util.List;
+import java.util.Optional;
 
 public class EmployeeView {
     private TableView<EmployeeBookDTO> bookTableView;
     private final ObservableList<EmployeeBookDTO> booksObservableList;
+
     private TextField authorTextField;
     private TextField titleTextField;
-    private Label authorLabel;
-    private Label titleLabel;
     private TextField priceTextField;
     private TextField stockTextField;
+
+    private Label authorLabel;
+    private Label titleLabel;
     private Label priceLabel;
     private Label stockLabel;
+
     private Button saveButton;
     private Button deleteButton;
+    private Button sellButton;
+
     private Stage primaryStage;
-    private Button backButton;
-    private  Scene scene;
+    private Scene scene;
 
     public EmployeeView(Stage primaryStage, List<EmployeeBookDTO> books) {
         this.primaryStage = primaryStage;
@@ -39,7 +51,7 @@ public class EmployeeView {
         GridPane gridPane = new GridPane();
         initializeGridPage(gridPane);
 
-        this.scene = new Scene(gridPane, 780, 500);
+        this.scene = new Scene(gridPane, 850, 550);
         primaryStage.setScene(scene);
 
         booksObservableList = FXCollections.observableArrayList(books);
@@ -76,7 +88,7 @@ public class EmployeeView {
         bookTableView.getColumns().addAll(titleColumn, authorColumn, priceColumn, stockColumn);
         bookTableView.setItems(booksObservableList);
 
-        gridPane.add(bookTableView, 0, 0, 6, 1);
+        gridPane.add(bookTableView, 0, 0, 8, 1);
     }
 
     private void initSaveOptions(GridPane gridPane) {
@@ -110,8 +122,60 @@ public class EmployeeView {
         deleteButton = new Button("Delete");
         gridPane.add(deleteButton, 5, 2);
 
-        backButton = new Button("Back");
-        gridPane.add(backButton, 7, 1);
+        sellButton = new Button("Sell");
+        gridPane.add(sellButton, 6, 2);
+    }
+
+    public EmployeeBookDTO showUpdateDialog(EmployeeBookDTO currentBook) {
+        Dialog<EmployeeBookDTO> dialog = new Dialog<>();
+        dialog.setTitle("Update Book");
+        dialog.setHeaderText("Update: " + currentBook.getTitle());
+
+        ButtonType updateButtonType = new ButtonType("Update", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(updateButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField titleField = new TextField();
+        titleField.setPromptText(currentBook.getTitle());
+
+        TextField authorField = new TextField();
+        authorField.setPromptText(currentBook.getAuthor());
+
+        TextField priceField = new TextField();
+        priceField.setPromptText(String.valueOf(currentBook.getPrice()));
+
+        TextField stockField = new TextField();
+        stockField.setPromptText(String.valueOf(currentBook.getStock()));
+
+        grid.add(new Label("Title:"), 0, 0); grid.add(titleField, 1, 0);
+        grid.add(new Label("Author:"), 0, 1); grid.add(authorField, 1, 1);
+        grid.add(new Label("Price:"), 0, 2); grid.add(priceField, 1, 2);
+        grid.add(new Label("Stock:"), 0, 3); grid.add(stockField, 1, 3);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == updateButtonType) {
+                double newPrice = priceField.getText().isEmpty() ? -1 : Double.parseDouble(priceField.getText());
+                int newStock = stockField.getText().isEmpty() ? -1 : Integer.parseInt(stockField.getText());
+
+                return new EmployeeBookDTOBuilder()
+                        .setId(currentBook.getId())
+                        .setTitle(titleField.getText())
+                        .setAuthor(authorField.getText())
+                        .setPrice(newPrice)
+                        .setStock(newStock)
+                        .build();
+            }
+            return null;
+        });
+
+        Optional<EmployeeBookDTO> result = dialog.showAndWait();
+        return result.orElse(null);
     }
 
     public void addSaveButtonListener(EventHandler<ActionEvent> saveButtonListener){
@@ -122,8 +186,12 @@ public class EmployeeView {
         deleteButton.setOnAction(deleteButtonListener);
     }
 
-    public void addBackButtonListener(EventHandler<ActionEvent> listener) {
-        backButton.setOnAction(listener);
+    public void addTableMouseListener(EventHandler<MouseEvent> mouseListener) {
+        bookTableView.setOnMouseClicked(mouseListener);
+    }
+
+    public void addSellButtonListener(EventHandler<ActionEvent> sellButtonListener){
+        sellButton.setOnAction(sellButtonListener);
     }
 
     public void addDisplayAlertMessage(String title, String header, String content) {
@@ -134,25 +202,10 @@ public class EmployeeView {
         alert.showAndWait();
     }
 
-    public String getAuthor() {
-        return authorTextField.getText();
-    }
-
-    public String getTitle() {
-        return titleTextField.getText();
-    }
-
-    public String getPrice() {
-        return priceTextField.getText();
-    }
-
-    public String getStock() {
-        return stockTextField.getText();
-    }
-
-    public void addBookToObservableList(EmployeeBookDTO employeeBookDTO) {
-        this.booksObservableList.add(employeeBookDTO);
-    }
+    public String getAuthor() { return authorTextField.getText(); }
+    public String getTitle() { return titleTextField.getText(); }
+    public String getPrice() { return priceTextField.getText(); }
+    public String getStock() { return stockTextField.getText(); }
 
     public void removeBookFromObservableList(EmployeeBookDTO employeeBookDTO) {
         this.booksObservableList.remove(employeeBookDTO);
@@ -170,5 +223,10 @@ public class EmployeeView {
         primaryStage.setTitle("Library (Employee)");
         primaryStage.setScene(this.scene);
         primaryStage.show();
+    }
+
+    public void refreshTableData(List<EmployeeBookDTO> newBooks) {
+        this.booksObservableList.clear();
+        this.booksObservableList.addAll(newBooks);
     }
 }
