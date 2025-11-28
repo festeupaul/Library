@@ -2,6 +2,7 @@ package service.sale;
 
 import model.Book;
 import model.Sale;
+import model.builder.SaleBuilder;
 import repository.sale.SaleRepository;
 import service.book.BookService;
 
@@ -40,15 +41,16 @@ public class SaleServiceImpl implements SaleService {
 
         double totalPrice = book.getPrice() * quantity;
 
-        Sale sale = new Sale(
-                null,
-                bookId,
-                customerId,
-                employeeId,
-                LocalDateTime.now(),
-                quantity,
-                totalPrice
-        );
+        Sale sale = new SaleBuilder()
+                .setId(null)
+                .setBookId(bookId)
+                .setCustomerId(customerId)
+                .setEmployeeID(employeeId)
+                .setSaleDate(LocalDateTime.now())
+                .setQuantity(quantity)
+                .setTotalPrice(totalPrice)
+                .build();
+
 
         return saleRepository.save(sale);
     }

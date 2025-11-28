@@ -54,7 +54,7 @@ public class UserRepositoryMySQL implements UserRepository {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         User user = new UserBuilder()
-                                .setId(resultSet.getLong("id")) // Setam si ID-ul!
+                                .setId(resultSet.getLong("id"))
                                 .setUsername(resultSet.getString("username"))
                                 .setPassword(resultSet.getString("password"))
                                 .setRole(rightsRolesRepository.findRoleForUser(resultSet.getLong("id")))
