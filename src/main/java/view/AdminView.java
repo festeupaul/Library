@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -13,6 +14,7 @@ public class AdminView {
     private Button libraryButton;
     private Button usersButton;
     private Stage primaryStage;
+    private Button reportButton;
     private Scene scene;
 
     public AdminView(Stage primaryStage) {
@@ -45,6 +47,9 @@ public class AdminView {
         usersButton = new Button("User Management");
         usersButton.setPrefSize(200, 50);
         gridPane.add(usersButton, 0, 1);
+
+        reportButton = new Button("Generate Monthly Report");
+        gridPane.add(reportButton, 1, 4);
     }
 
     public void addLibraryButtonListener(EventHandler<ActionEvent> libraryManagementListener) {
@@ -53,6 +58,18 @@ public class AdminView {
 
     public void addUsersButtonListener(EventHandler<ActionEvent> userManagementListener) {
         usersButton.setOnAction(userManagementListener);
+    }
+
+    public void addReportButtonListener(EventHandler<ActionEvent> reportButtonListener) {
+        reportButton.setOnAction(reportButtonListener);
+    }
+
+    public void addDisplayAlertMessage(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     public void show() {
