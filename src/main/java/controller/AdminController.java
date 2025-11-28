@@ -10,6 +10,7 @@ import repository.sale.SaleRepository;
 import repository.sale.SaleRepositoryMySQL;
 import service.report.ReportService;
 import view.AdminView;
+import view.model.SaleReportDTO;
 
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class AdminController {
     private class ReportButtonListener implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent actionEvent) {
-            List<Sale> sales = saleRepository.findAllSalesLastMonth();
+            List<SaleReportDTO> sales = saleRepository.findAllSalesLastMonth();
             if (sales.isEmpty()) {
                 adminView.addDisplayAlertMessage("Report Info", "No Sales", "No sales found in the last 30 days.");
             } else {

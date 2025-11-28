@@ -10,16 +10,6 @@ public class Sale {
     private LocalDateTime saleDate;
     private int quantity;
     private double totalPrice;
-
-    public Sale(Long id, Long bookId, Long customerId, Long employeeID, LocalDateTime saleDate, int quantity, double totalPrice) {
-        this.id = id;
-        this.bookId = bookId;
-        this.customerId = customerId;
-        this.employeeID = employeeID;
-        this.saleDate = saleDate;
-        this.quantity = quantity;
-        this.totalPrice = totalPrice;
-    }
     
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

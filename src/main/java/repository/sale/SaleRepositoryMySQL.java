@@ -2,6 +2,9 @@ package repository.sale;
 
 import database.DatabaseConnectionFactory;
 import model.Sale;
+import model.builder.SaleBuilder;
+import view.model.SaleReportDTO;
+import view.model.builder.SaleReportDTOBuilder;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -38,31 +41,38 @@ public class SaleRepositoryMySQL implements SaleRepository {
     }
 
     @Override
-    public List<Sale> findAllSalesLastMonth() {
-        List<Sale> sales = new ArrayList<>();
-        String sql = "SELECT * " +
-                "FROM sale " +
-                "WHERE sale_date >= " +
-                "NOW() - INTERVAL 1 MONTH";
+    public List<SaleReportDTO> findAllSalesLastMonth() {
+        List<SaleReportDTO> reportData = new ArrayList<>();
+
+        String sql = "SELECT s.id, s.quantity, s.total_price, " +
+                "       b.title AS book_title, " +
+                "       u1.username AS employee_name, " +
+                "       u2.username AS customer_name " +
+                "FROM sale s " +
+                "JOIN book b ON s.book_id = b.id " +
+                "JOIN user u1 ON s.employee_id = u1.id " +
+                "JOIN user u2 ON s.customer_id = u2.id " +
+                "WHERE s.sale_date >= NOW() - INTERVAL 1 MONTH";
+
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
             while (resultSet.next()) {
-                Sale sale = new Sale(
-                        resultSet.getLong("id"),
-                        resultSet.getLong("book_id"),
-                        resultSet.getLong("customer_id"),
-                        resultSet.getLong("employee_id"),
-                        resultSet.getTimestamp("sale_date").toLocalDateTime(),
-                        resultSet.getInt("quantity"),
-                        resultSet.getDouble("total_price")
-                );
-                sales.add(sale);
+                SaleReportDTO dto = new SaleReportDTOBuilder()
+                        .setSaleId(resultSet.getLong("id"))
+                        .setBookTitle(resultSet.getString("book_title"))
+                        .setEmployeeName(resultSet.getString("employee_name"))
+                        .setCustomerName(resultSet.getString("customer_name"))
+                        .setQuantity(resultSet.getInt("quantity"))
+                        .setTotalPrice(resultSet.getDouble("total_price"))
+                        .build();
+
+                reportData.add(dto);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return sales;
+        return reportData;
     }
 }
